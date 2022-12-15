@@ -112,10 +112,23 @@ const deleteUser = (req, res) => {
     });
 };
 
+const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
+  const { email } = req.body;
+  database
+    .query("select * from users where email like ?", [email])
+    .then(([user]) => {
+      if(user[0] != null) {
+        req.user = user[0]
+        next();
+      } else res.sendStatus(401);
+    });
+}
+
 module.exports = {
   getUsers,
   getUserById,
   postUser,
   updateUser,
   deleteUser,
+  getUserByEmailWithPasswordAndPassToNext,
 };
